@@ -1,0 +1,17 @@
+{
+  "name": "zen",
+  "version": "0.0.0",
+  "private": false,
+  "author": "Yulei Zhu",
+  "description": "zen is a 3D charting library",
+  "main": "./src/index.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vyse12138/zen",
+    "directory": "packages/zen"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.138.3"
+  }
+}
