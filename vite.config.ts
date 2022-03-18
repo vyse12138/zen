@@ -5,5 +5,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   root: 'docs',
-  cacheDir: '../node_modules/.vite'
+  cacheDir: '../node_modules/.vite',
+  build: {
+    outDir: '../dist'
+  }
 })
