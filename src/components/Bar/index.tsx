@@ -10,16 +10,9 @@ interface BarProps {
   size?: number
   xLabel?: string[]
   zLabel?: string[]
-  name: string
 }
 
-export default function Bar({
-  data,
-  size = 300,
-  xLabel,
-  zLabel,
-  name
-}: BarProps) {
+export default function Bar({ data, size = 300, xLabel, zLabel }: BarProps) {
   const canvas = useRef<HTMLCanvasElement>(null)
   const [modalData, setModalData] = useState({
     x: 0,
@@ -31,7 +24,6 @@ export default function Bar({
     if (!canvas.current) return
 
     const maxData = Math.max(...data.flat(2))
-    const minAxis = Math.min(data.length, data[0].length)
 
     // raycaster related variables
     const raycaster = new THREE.Raycaster()
@@ -48,16 +40,21 @@ export default function Bar({
 
     // camera, control
     const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000)
-    const controls = new OrbitControls(camera, canvas.current)
-    camera.position.z = 8
-    camera.position.x = -8
-    camera.position.y = 8
-    controls.autoRotate = false
-    controls.target = new THREE.Vector3(minAxis, 0, -minAxis)
-
+    const control = new OrbitControls(camera, canvas.current)
+    camera.position.z = 5
+    camera.position.x = -5
+    camera.position.y = 12
+    control.autoRotate = false
+    control.enableDamping = true
+    control.target = new THREE.Vector3(
+      Math.sqrt(data[0].length),
+      0,
+      -Math.sqrt(data.length)
+    )
+    control.screenSpacePanning = false
     // color
-    const color = new THREE.Color()
-    const highlight = new THREE.Color('red')
+    const baseColor = new THREE.Color('#30cc35')
+    const color = new THREE.Color(76 / 255, 175 / 255, 80 / 255)
 
     // mesh
     const material = new THREE.MeshStandardMaterial()
@@ -77,7 +74,12 @@ export default function Bar({
         }
         matrix.makeScale(1, data[z][x], 1)
         matrix.setPosition(x, data[z][x] / 2, -z)
-        color.setHSL(1 / 3, 1, (maxData - data[z][x]) / maxData / 2 + 0.3)
+        const colorScale = 0.6 + (maxData - data[z][x]) / maxData
+        color.setRGB(
+          baseColor.r * colorScale,
+          baseColor.g * colorScale,
+          baseColor.b * colorScale
+        )
         cube.setColorAt(i, color)
         cube.setMatrixAt(i++, matrix)
       }
@@ -139,34 +141,41 @@ export default function Bar({
           -((e.clientY - e.target.getBoundingClientRect().y) / size) * 2 + 1
 
         // get the color of last intersect
-        const scale = new THREE.Vector3().setFromMatrixScale(matrix)
 
         // update raycaster
         raycaster.setFromCamera(pointer, camera)
         intersect = raycaster.intersectObjects(scene.children)[0]
+
+        // reset last intersect's color
+        if (typeof lastInstanceId === 'number') {
+          const scale = new THREE.Vector3().setFromMatrixScale(matrix)
+          const colorScale = 0.6 + (maxData - scale.y) / maxData
+
+          color.setRGB(
+            baseColor.r * colorScale,
+            baseColor.g * colorScale,
+            baseColor.b * colorScale
+          )
+          cube.setColorAt(lastInstanceId, color)
+          lastInstanceId = null
+        }
 
         // update highlight and modal
         if (
           typeof intersect?.instanceId === 'number' &&
           intersect?.object instanceof THREE.InstancedMesh
         ) {
-          color.setHSL(1 / 3, 1, (maxData - scale.y) / maxData / 2 + 0.3)
-
           intersect.object.getMatrixAt(intersect.instanceId, matrix)
-          typeof lastInstanceId === 'number' &&
-            cube.setColorAt(lastInstanceId, color)
-          cube.setColorAt(intersect.instanceId, highlight)
+          color.setRGB(color.r + 0.25, color.g + 0.25, color.b + 0.25)
+          cube.setColorAt(intersect.instanceId, color)
           lastInstanceId = intersect.instanceId
 
           const position = new THREE.Vector3().setFromMatrixPosition(matrix)
           setModalData(data => ({ ...data, x, y, position, show: true }))
         } else {
-          if (typeof lastInstanceId === 'number') {
-            cube.setColorAt(lastInstanceId, color)
-            lastInstanceId = null
-          }
           setModalData(data => ({ ...data, x, y, show: false }))
         }
+
         cube.instanceColor!.needsUpdate = true
       }
     }
@@ -182,8 +191,9 @@ export default function Bar({
     })
     ;(function animate() {
       requestAnimationFrame(animate)
-      controls.update()
+      control.update()
       renderer.render(scene, camera)
+      console.log(camera.position, control.target)
     })()
     return () => {
       renderer.dispose()
@@ -210,28 +220,60 @@ export default function Bar({
             backgroundColor: 'white',
             transition: 'opacity 0.3s',
             opacity: modalData.show ? 1 : 0,
-            padding: 10,
             borderRadius: 4,
             pointerEvents: 'none',
-            boxShadow: 'rgb(0 0 0 / 20%) 1px 2px 10px'
+            boxShadow: 'rgb(0 0 0 / 20%) 1px 2px 10px',
+            padding: 10
           }}
         >
-          {name} on{' '}
-          {zLabel
-            ? zLabel[
-                -Math.floor(
-                  (modalData.position.z * zLabel.length) / data.length
-                )
-              ]
-            : modalData.position.z}{' '}
-          {xLabel
-            ? xLabel[
-                Math.floor(
-                  (modalData.position.x * xLabel.length) / data[0].length
-                )
-              ]
-            : modalData.position.x}{' '}
-          is: {modalData.position.y * 2}
+          <div>
+            <div
+              style={{
+                display: 'inline-block',
+                borderRadius: 10,
+                border: '3px solid green',
+                width: 3,
+                height: 3,
+                marginRight: 10
+              }}
+            ></div>
+            {zLabel
+              ? zLabel[
+                  -Math.floor(
+                    (modalData.position.z * zLabel.length) / data.length
+                  )
+                ]
+              : modalData.position.z}{' '}
+          </div>
+          <div>
+            <div
+              style={{
+                display: 'inline-block',
+                borderRadius: 10,
+                border: '3px solid blue',
+                width: 3,
+                height: 3,
+                marginRight: 10
+              }}
+            ></div>
+            {xLabel
+              ? xLabel[
+                  Math.floor(
+                    (modalData.position.x * xLabel.length) / data[0].length
+                  )
+                ]
+              : modalData.position.x}{' '}
+            <b
+              style={{
+                display: 'inline-block',
+                marginLeft: 16,
+                fontSize: '1.2rem',
+                transform: 'translateY(-0.6rem)'
+              }}
+            >
+              {modalData.position.y * 2}
+            </b>
+          </div>
         </div>
       }
     </div>

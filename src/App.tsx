@@ -7,7 +7,6 @@ function App() {
   return (
     <div>
       <Bar
-        name='commits'
         data={mock(52, 7)}
         size={500}
         xLabel={[
