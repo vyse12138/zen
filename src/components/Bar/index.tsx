@@ -88,7 +88,7 @@ export default function Bar({
 
     // label
     if (xLabel || zLabel) {
-      new FontLoader().load('fontB.json', font => {
+      new FontLoader().load('font.json', font => {
         const material = new THREE.MeshBasicMaterial({
           color: new THREE.Color('black')
         })
@@ -211,7 +211,7 @@ export default function Bar({
             boxShadow: 'rgb(0 0 0 / 20%) 1px 2px 10px'
           }}
         >
-          {name} at{' '}
+          {name} on{' '}
           {
             zLabel[
               -Math.floor((modalData.position.z * zLabel.length) / data.length)
