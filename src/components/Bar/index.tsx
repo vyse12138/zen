@@ -1,56 +1,41 @@
-import { useEffect, useRef } from 'react'
+import { number } from 'prop-types'
+import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { mock } from '../../utils/mock'
+import { initScene } from '../../utils/scene'
 
 interface BarProps {
   data: number[][]
   size?: number
 }
 
-interface Options {
-  data: number[][]
-}
-
 export default function Bar({ data, size = 300 }: BarProps) {
   const canvas = useRef<HTMLCanvasElement>(null)
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   useEffect(() => {
     if (!canvas.current) return
 
-    // scene renderer camera control
+    const maxData = Math.max(...data.flat(2))
+    // renderer, scene
     const renderer = new THREE.WebGLRenderer({
       canvas: canvas.current,
       antialias: true
     })
-    renderer.setPixelRatio(window.devicePixelRatio)
+    const scene = initScene(renderer, size)
+
+    // camera, control
     const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000)
-    const controls = new OrbitControls(camera, renderer.domElement)
+    const controls = new OrbitControls(camera, canvas.current)
+    camera.position.z = 15
+    camera.position.x = 45
+    camera.position.y = 35
     controls.autoRotate = false
-    const scene = new THREE.Scene()
+    controls.target = new THREE.Vector3(data[0].length / 2, 0, -data.length / 2)
 
-    // scene config
-    renderer.setSize(size, size)
-    scene.background = new THREE.Color('#cccccc')
-    camera.position.z = 5
-    camera.position.x = 5
-    camera.position.y = 5
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.4)
-    const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1)
-    directionalLight.position.set(50, 30, 20)
-    directionalLight2.position.set(-50, -30, -20)
-    scene.add(directionalLight)
-    scene.add(directionalLight2)
+    // color
+    const color = new THREE.Color()
+    const highlight = new THREE.Color('red')
 
-    //color
-    const color = [
-      new THREE.Color('#f44336'),
-      new THREE.Color('#ff9800'),
-      new THREE.Color('#ffeb3b'),
-      new THREE.Color('#4caf50'),
-      new THREE.Color('#1769aa'),
-      new THREE.Color('#3f51b5'),
-      new THREE.Color('#9c27b0')
-    ]
     // mesh
     const material = new THREE.MeshStandardMaterial()
     const geometry = new THREE.BoxGeometry(1, 1, 1)
@@ -68,48 +53,55 @@ export default function Bar({ data, size = 300 }: BarProps) {
           continue
         }
         matrix.makeScale(1, data[z][x], 1)
-        matrix.setPosition(x, data[z][x] / 2, z)
-        cube.setColorAt(i, color[z % color.length])
+        matrix.setPosition(x, data[z][x] / 2, -z)
+        color.setHSL(1 / 3, 1, (maxData - data[z][x]) / maxData / 2 + 0.3)
+        cube.setColorAt(i, color)
         cube.setMatrixAt(i++, matrix)
       }
     }
-
     scene.add(cube)
 
-    const pointer = new THREE.Vector2(-1, -1)
+    // ray
     const raycaster = new THREE.Raycaster()
+    const pointer = new THREE.Vector2(-1, -1)
     canvas.current.addEventListener('pointermove', e => {
-      pointer.x =
-        ((e.clientX -
-          (e.target as HTMLCanvasElement).getBoundingClientRect().x) /
-          size) *
-          2 -
-        1
-      pointer.y =
-        -(
-          (e.clientY -
-            (e.target as HTMLCanvasElement).getBoundingClientRect().y) /
-          size
-        ) *
-          2 +
-        1
+      if (e.target instanceof HTMLCanvasElement) {
+        const rect = e.target.getBoundingClientRect()
+        const x = e.clientX - rect.x
+        const y = e.clientY - rect.y
+
+        pointer.x =
+          ((e.clientX - e.target.getBoundingClientRect().x) / size) * 2 - 1
+        pointer.y =
+          -((e.clientY - e.target.getBoundingClientRect().y) / size) * 2 + 1
+
+        setMousePos({ x, y })
+      }
     })
     canvas.current.addEventListener('pointerleave', e => {
+      // setMousePos({ x: 0, y: 0 })
       pointer.x = -1
       pointer.y = -1
     })
-    // camera and control origin
-    camera.position.z = -33
-    camera.position.x = -33
-    camera.position.y = 33
-    controls.target = new THREE.Vector3(data[0].length / 2, 0, data.length / 2)
+
+    let lastInstanceId: null | number = null
+
     ;(function animate() {
       requestAnimationFrame(animate)
       raycaster.setFromCamera(pointer, camera)
-      const intersects = raycaster.intersectObjects(scene.children)
-      if (intersects[0]) {
-        console.log(1)
+      const intersect = raycaster.intersectObjects(scene.children)[0]
+      if (intersect?.object instanceof THREE.InstancedMesh) {
+        intersect.object.getMatrixAt(intersect.instanceId, matrix)
+        // const position = new THREE.Vector3().setFromMatrixPosition(matrix)
+        cube.setColorAt(lastInstanceId, color)
+        cube.setColorAt(intersect.instanceId, highlight)
+        lastInstanceId = intersect.instanceId
+      } else {
+        cube.setColorAt(lastInstanceId, color)
+        lastInstanceId = null
       }
+      cube.instanceColor.needsUpdate = true
+
       controls.update()
       renderer.render(scene, camera)
     })()
@@ -120,8 +112,29 @@ export default function Bar({ data, size = 300 }: BarProps) {
   }, [])
 
   return (
-    <div className='App'>
+    <div
+      style={{
+        position: 'relative'
+      }}
+    >
       <canvas ref={canvas}></canvas>
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          transform: `translate3d(${mousePos.x + 20}px, ${
+            mousePos.y + 20
+          }px, 0px)`,
+          willChange: 'transform',
+          width: 40,
+          height: 40,
+          border: '1px solid black',
+          backgroundColor: 'white'
+        }}
+      >
+        temp
+      </div>
     </div>
   )
 }
