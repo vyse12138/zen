@@ -193,7 +193,6 @@ export default function Bar({ data, size = 300, xLabel, zLabel }: BarProps) {
       requestAnimationFrame(animate)
       control.update()
       renderer.render(scene, camera)
-      console.log(camera.position, control.target)
     })()
     return () => {
       renderer.dispose()

@@ -4,7 +4,7 @@ zen 是一款 3D 图表库
 
 目前支持以 React 组件的形式添加入已有的项目中
 
-[展示地址](https://zen-sand.vercel.app/)
+[展示地址](https://zen.yuleiz.com/)
 
 ## 技术栈
 
