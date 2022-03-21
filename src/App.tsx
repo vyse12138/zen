@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Bar from './components/Bar'
 import { mock } from './utils/mock'
+import './App.css'
 
 function App() {
   return (

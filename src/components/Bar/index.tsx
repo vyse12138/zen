@@ -11,10 +11,17 @@ interface BarProps {
 
 export default function Bar({ data, size = 300 }: BarProps) {
   const canvas = useRef<HTMLCanvasElement>(null)
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
+  const [modalData, setModalData] = useState({
+    x: 0,
+    y: 0,
+    show: false,
+    position: new THREE.Vector3()
+  })
   useEffect(() => {
     if (!canvas.current) return
 
+    let lastInstanceId: null | number = null
+    let intersect: THREE.Intersection<THREE.Object3D<THREE.Event>>
     const maxData = Math.max(...data.flat(2))
     // renderer, scene
     const renderer = new THREE.WebGLRenderer({
@@ -61,10 +68,7 @@ export default function Bar({ data, size = 300 }: BarProps) {
     }
     scene.add(cube)
 
-    // ray
-    const raycaster = new THREE.Raycaster()
-    const pointer = new THREE.Vector2(-1, -1)
-    canvas.current.addEventListener('pointermove', e => {
+    const handleHover = (e: PointerEvent) => {
       if (e.target instanceof HTMLCanvasElement) {
         const rect = e.target.getBoundingClientRect()
         const x = e.clientX - rect.x
@@ -75,27 +79,44 @@ export default function Bar({ data, size = 300 }: BarProps) {
         pointer.y =
           -((e.clientY - e.target.getBoundingClientRect().y) / size) * 2 + 1
 
-        setMousePos({ x, y })
+        if (intersect?.object instanceof THREE.InstancedMesh) {
+          intersect.object.getMatrixAt(intersect.instanceId, matrix)
+          const position = new THREE.Vector3().setFromMatrixPosition(matrix)
+          setModalData(data => ({ ...data, x, y, position, show: true }))
+        } else {
+          setModalData(data => ({ ...data, x, y, show: false }))
+        }
       }
-    })
+    }
+    // ray
+    const raycaster = new THREE.Raycaster()
+    const pointer = new THREE.Vector2(-1, -1)
+    canvas.current.addEventListener('pointermove', handleHover)
     canvas.current.addEventListener('pointerleave', e => {
-      // setMousePos({ x: 0, y: 0 })
+      setModalData(data => ({ ...data, show: false }))
       pointer.x = -1
       pointer.y = -1
     })
 
-    let lastInstanceId: null | number = null
-
+    canvas.current.addEventListener('pointerdown', handleHover)
     ;(function animate() {
       requestAnimationFrame(animate)
+
+      // update raycaster
       raycaster.setFromCamera(pointer, camera)
-      const intersect = raycaster.intersectObjects(scene.children)[0]
+      intersect = raycaster.intersectObjects(scene.children)[0]
+
       if (intersect?.object instanceof THREE.InstancedMesh) {
+        // get the color of last intersect
+        const scale = new THREE.Vector3().setFromMatrixScale(matrix)
+        color.setHSL(1 / 3, 1, (maxData - scale.y) / maxData / 2 + 0.3)
+
         intersect.object.getMatrixAt(intersect.instanceId, matrix)
-        // const position = new THREE.Vector3().setFromMatrixPosition(matrix)
         cube.setColorAt(lastInstanceId, color)
         cube.setColorAt(intersect.instanceId, highlight)
         lastInstanceId = intersect.instanceId
+
+        // const position = new THREE.Vector3().setFromMatrixPosition(matrix)
       } else {
         cube.setColorAt(lastInstanceId, color)
         lastInstanceId = null
@@ -118,23 +139,29 @@ export default function Bar({ data, size = 300 }: BarProps) {
       }}
     >
       <canvas ref={canvas}></canvas>
-      <div
-        style={{
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          transform: `translate3d(${mousePos.x + 20}px, ${
-            mousePos.y + 20
-          }px, 0px)`,
-          willChange: 'transform',
-          width: 40,
-          height: 40,
-          border: '1px solid black',
-          backgroundColor: 'white'
-        }}
-      >
-        temp
-      </div>
+      {
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            transform: `translate3d(${modalData.x + 10}px, ${
+              modalData.y + 10
+            }px, 0px)`,
+            willChange: 'transform',
+            backgroundColor: 'white',
+            transition: 'opacity 0.3s',
+            opacity: modalData.show ? 1 : 0,
+            padding: 10,
+            borderRadius: 4,
+            pointerEvents: 'none',
+            boxShadow: 'rgb(0 0 0 / 20%) 1px 2px 10px'
+          }}
+        >
+          data at {-modalData.position.z} - {modalData.position.x} is:{' '}
+          {modalData.position.y * 2}
+        </div>
+      }
     </div>
   )
 }
