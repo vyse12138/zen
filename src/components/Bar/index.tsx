@@ -1,11 +1,9 @@
-import { number } from 'prop-types'
 import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { initScene } from '../../utils/scene'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
-import gg from 'three/examples/fonts/gentilis_bold.typeface.json'
 
 interface BarProps {
   data: number[][]
@@ -88,39 +86,43 @@ export default function Bar({
 
     // label
     if (xLabel || zLabel) {
-      new FontLoader().load('font.json', font => {
+      new FontLoader().load('./api/font', font => {
         const material = new THREE.MeshBasicMaterial({
           color: new THREE.Color('black')
         })
 
         // xLabel
-        for (let i = 0; i < xLabel.length; i++) {
-          const scale = data[0].length / xLabel.length
-          const geometry = new TextGeometry(xLabel[i], {
-            font: font,
-            size: 0.5,
-            height: 0.02
-          })
-          const label = new THREE.Mesh(geometry, material)
-          label.position.set(i * scale, 0, 1)
-          label.rotateY(-Math.PI / 2)
-          label.rotateX(-Math.PI / 4)
-          scene.add(label)
+        if (xLabel) {
+          for (let i = 0; i < xLabel.length; i++) {
+            const scale = data[0].length / xLabel.length
+            const geometry = new TextGeometry(xLabel[i], {
+              font: font,
+              size: 0.5,
+              height: 0.02
+            })
+            const label = new THREE.Mesh(geometry, material)
+            label.position.set(i * scale, 0, 1)
+            label.rotateY(-Math.PI / 2)
+            label.rotateX(-Math.PI / 4)
+            scene.add(label)
+          }
         }
 
         // zLabel
-        for (let i = 0; i < zLabel.length; i++) {
-          const scale = data.length / zLabel.length
-          const geometry = new TextGeometry(zLabel[i], {
-            font: font,
-            size: 0.5,
-            height: 0.02
-          })
-          const label = new THREE.Mesh(geometry, material)
-          label.position.set(-zLabel[i].length / 2 - 1, 0, -i * scale)
-          label.rotateX(-Math.PI / 4)
+        if (zLabel) {
+          for (let i = 0; i < zLabel.length; i++) {
+            const scale = data.length / zLabel.length
+            const geometry = new TextGeometry(zLabel[i], {
+              font: font,
+              size: 0.5,
+              height: 0.02
+            })
+            const label = new THREE.Mesh(geometry, material)
+            label.position.set(-zLabel[i].length / 2 - 1, 0, -i * scale)
+            label.rotateX(-Math.PI / 4)
 
-          scene.add(label)
+            scene.add(label)
+          }
         }
       })
     }
@@ -144,7 +146,10 @@ export default function Bar({
         intersect = raycaster.intersectObjects(scene.children)[0]
 
         // update highlight and modal
-        if (intersect?.object instanceof THREE.InstancedMesh) {
+        if (
+          typeof intersect?.instanceId === 'number' &&
+          intersect?.object instanceof THREE.InstancedMesh
+        ) {
           color.setHSL(1 / 3, 1, (maxData - scale.y) / maxData / 2 + 0.3)
 
           intersect.object.getMatrixAt(intersect.instanceId, matrix)
@@ -162,7 +167,7 @@ export default function Bar({
           }
           setModalData(data => ({ ...data, x, y, show: false }))
         }
-        cube.instanceColor.needsUpdate = true
+        cube.instanceColor!.needsUpdate = true
       }
     }
     // ray
@@ -212,18 +217,20 @@ export default function Bar({
           }}
         >
           {name} on{' '}
-          {
-            zLabel[
-              -Math.floor((modalData.position.z * zLabel.length) / data.length)
-            ]
-          }{' '}
-          {
-            xLabel[
-              Math.floor(
-                (modalData.position.x * xLabel.length) / data[0].length
-              )
-            ]
-          }{' '}
+          {zLabel
+            ? zLabel[
+                -Math.floor(
+                  (modalData.position.z * zLabel.length) / data.length
+                )
+              ]
+            : modalData.position.z}{' '}
+          {xLabel
+            ? xLabel[
+                Math.floor(
+                  (modalData.position.x * xLabel.length) / data[0].length
+                )
+              ]
+            : modalData.position.x}{' '}
           is: {modalData.position.y * 2}
         </div>
       }
