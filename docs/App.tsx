@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import Bar from './components/Bar'
+import { Bar } from '../src'
 import { mock } from './utils/mock'
 import './App.css'
 

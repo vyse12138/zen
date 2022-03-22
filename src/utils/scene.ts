@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+
 export const initScene = (renderer: THREE.WebGLRenderer, size: number) => {
   renderer.setPixelRatio(window.devicePixelRatio)
   renderer.setSize(size, size)
