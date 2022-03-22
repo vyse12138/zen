@@ -6,7 +6,7 @@ export const initScene = (renderer: THREE.WebGLRenderer, size: number) => {
 
   const scene = new THREE.Scene()
 
-  scene.background = new THREE.Color('#cccccc')
+  scene.background = new THREE.Color('#ffffff')
 
   const directionalLight = new THREE.DirectionalLight(0xffffff, 1.4)
   const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1)

@@ -5,5 +5,5 @@ export const randomInt = (size: number): number => {
 export const mock = (x: number, y: number): number[][] => {
   return new Array(y)
     .fill(null)
-    .map(e => new Array(x).fill(null).map(e => randomInt(10)))
+    .map(e => new Array(x).fill(null).map(e => randomInt(30)))
 }

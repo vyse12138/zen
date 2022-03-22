@@ -10,20 +10,29 @@ interface BarProps {
   size?: number
   xLabel?: string[]
   zLabel?: string[]
+  colors?: string[]
 }
 
-export default function Bar({ data, size = 300, xLabel, zLabel }: BarProps) {
+export default function Bar({
+  data,
+  size = 300,
+  xLabel,
+  zLabel,
+  colors = ['#4caf50']
+}: BarProps) {
   const canvas = useRef<HTMLCanvasElement>(null)
+
   const [modalData, setModalData] = useState({
     x: 0,
     y: 0,
     show: false,
     position: new THREE.Vector3()
   })
+  const maxData = Math.max(...data.flat(2))
+  const scale = 8 / Math.max(...data.flat(2))
+
   useEffect(() => {
     if (!canvas.current) return
-
-    const maxData = Math.max(...data.flat(2))
 
     // raycaster related variables
     const raycaster = new THREE.Raycaster()
@@ -52,9 +61,10 @@ export default function Bar({ data, size = 300, xLabel, zLabel }: BarProps) {
       -Math.sqrt(data.length)
     )
     control.screenSpacePanning = false
+
     // color
-    const baseColor = new THREE.Color('#30cc35')
-    const color = new THREE.Color(76 / 255, 175 / 255, 80 / 255)
+    const baseColors = colors.map(color => new THREE.Color(color))
+    const color = new THREE.Color()
 
     // mesh
     const material = new THREE.MeshStandardMaterial()
@@ -72,13 +82,13 @@ export default function Bar({ data, size = 300, xLabel, zLabel }: BarProps) {
         if (data[z][x] === 0) {
           continue
         }
-        matrix.makeScale(1, data[z][x], 1)
-        matrix.setPosition(x, data[z][x] / 2, -z)
-        const colorScale = 0.6 + (maxData - data[z][x]) / maxData
+        matrix.makeScale(1, data[z][x] * scale, 1)
+        matrix.setPosition(x, (data[z][x] * scale) / 2, -z)
+        const colorScale = 0.75 + (maxData - data[z][x]) / maxData
         color.setRGB(
-          baseColor.r * colorScale,
-          baseColor.g * colorScale,
-          baseColor.b * colorScale
+          baseColors[z % baseColors.length].r * colorScale,
+          baseColors[z % baseColors.length].g * colorScale,
+          baseColors[z % baseColors.length].b * colorScale
         )
         cube.setColorAt(i, color)
         cube.setMatrixAt(i++, matrix)
@@ -129,6 +139,7 @@ export default function Bar({ data, size = 300, xLabel, zLabel }: BarProps) {
       })
     }
 
+    // hover effect
     const handleHover = (e: PointerEvent) => {
       if (e.target instanceof HTMLCanvasElement) {
         const rect = e.target.getBoundingClientRect()
@@ -147,14 +158,18 @@ export default function Bar({ data, size = 300, xLabel, zLabel }: BarProps) {
         intersect = raycaster.intersectObjects(scene.children)[0]
 
         // reset last intersect's color
-        if (typeof lastInstanceId === 'number') {
-          const scale = new THREE.Vector3().setFromMatrixScale(matrix)
-          const colorScale = 0.6 + (maxData - scale.y) / maxData
-
+        if (
+          typeof lastInstanceId === 'number' &&
+          intersect?.instanceId !== lastInstanceId
+        ) {
+          cube.getMatrixAt(lastInstanceId, matrix)
+          const position = new THREE.Vector3().setFromMatrixPosition(matrix)
+          const colorScale =
+            0.75 + (maxData - (position.y * 2) / scale) / maxData
           color.setRGB(
-            baseColor.r * colorScale,
-            baseColor.g * colorScale,
-            baseColor.b * colorScale
+            baseColors[-position.z % baseColors.length].r * colorScale,
+            baseColors[-position.z % baseColors.length].g * colorScale,
+            baseColors[-position.z % baseColors.length].b * colorScale
           )
           cube.setColorAt(lastInstanceId, color)
           lastInstanceId = null
@@ -163,17 +178,20 @@ export default function Bar({ data, size = 300, xLabel, zLabel }: BarProps) {
         // update highlight and modal
         if (
           typeof intersect?.instanceId === 'number' &&
-          intersect?.object instanceof THREE.InstancedMesh
+          intersect?.instanceId !== lastInstanceId
         ) {
-          intersect.object.getMatrixAt(intersect.instanceId, matrix)
+          cube.getColorAt(intersect.instanceId, color)
           color.setRGB(color.r + 0.25, color.g + 0.25, color.b + 0.25)
           cube.setColorAt(intersect.instanceId, color)
           lastInstanceId = intersect.instanceId
-
-          const position = new THREE.Vector3().setFromMatrixPosition(matrix)
-          setModalData(data => ({ ...data, x, y, position, show: true }))
         } else {
-          setModalData(data => ({ ...data, x, y, show: false }))
+          if (typeof intersect?.instanceId === 'number') {
+            cube.getMatrixAt(intersect.instanceId, matrix)
+            const position = new THREE.Vector3().setFromMatrixPosition(matrix)
+            setModalData(data => ({ ...data, x, y, position, show: true }))
+          } else {
+            setModalData(data => ({ ...data, x, y, show: false }))
+          }
         }
 
         cube.instanceColor!.needsUpdate = true
@@ -202,7 +220,10 @@ export default function Bar({ data, size = 300, xLabel, zLabel }: BarProps) {
   return (
     <div
       style={{
-        position: 'relative'
+        position: 'relative',
+        boxShadow: 'rgb(0 0 0 / 20%) 1px 2px 10px',
+        height: size,
+        width: size
       }}
     >
       <canvas ref={canvas}></canvas>
@@ -230,7 +251,9 @@ export default function Bar({ data, size = 300, xLabel, zLabel }: BarProps) {
               style={{
                 display: 'inline-block',
                 borderRadius: 10,
-                border: '3px solid green',
+                border: `3px solid ${
+                  colors[-modalData.position.z % colors.length]
+                }`,
                 width: 3,
                 height: 3,
                 marginRight: 10
@@ -249,7 +272,7 @@ export default function Bar({ data, size = 300, xLabel, zLabel }: BarProps) {
               style={{
                 display: 'inline-block',
                 borderRadius: 10,
-                border: '3px solid blue',
+                border: '3px solid black',
                 width: 3,
                 height: 3,
                 marginRight: 10
@@ -265,12 +288,12 @@ export default function Bar({ data, size = 300, xLabel, zLabel }: BarProps) {
             <b
               style={{
                 display: 'inline-block',
-                marginLeft: 16,
+                marginLeft: 30,
                 fontSize: '1.2rem',
                 transform: 'translateY(-0.6rem)'
               }}
             >
-              {modalData.position.y * 2}
+              {Math.round((modalData.position.y * 2) / scale)}
             </b>
           </div>
         </div>
