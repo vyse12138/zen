@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { initScene } from '../utils/scene'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
+import Helvetica from 'three/examples/fonts/helvetiker_bold.typeface.json'
 
 interface BarProps {
   data: number[][]
@@ -98,45 +99,45 @@ export default function Bar({
 
     // label
     if (xLabel || zLabel) {
-      new FontLoader().load('./api/font', font => {
-        const material = new THREE.MeshBasicMaterial({
-          color: new THREE.Color('black')
-        })
+      const font = new FontLoader().parse(Helvetica)
 
-        // xLabel
-        if (xLabel) {
-          for (let i = 0; i < xLabel.length; i++) {
-            const scale = data[0].length / xLabel.length
-            const geometry = new TextGeometry(xLabel[i], {
-              font: font,
-              size: 0.5,
-              height: 0.02
-            })
-            const label = new THREE.Mesh(geometry, material)
-            label.position.set(i * scale, 0, 1)
-            label.rotateY(-Math.PI / 2)
-            label.rotateX(-Math.PI / 4)
-            scene.add(label)
-          }
-        }
-
-        // zLabel
-        if (zLabel) {
-          for (let i = 0; i < zLabel.length; i++) {
-            const scale = data.length / zLabel.length
-            const geometry = new TextGeometry(zLabel[i], {
-              font: font,
-              size: 0.5,
-              height: 0.02
-            })
-            const label = new THREE.Mesh(geometry, material)
-            label.position.set(-zLabel[i].length / 2 - 1, 0, -i * scale)
-            label.rotateX(-Math.PI / 4)
-
-            scene.add(label)
-          }
-        }
+      const material = new THREE.MeshBasicMaterial({
+        color: new THREE.Color('black')
       })
+
+      // xLabel
+      if (xLabel) {
+        for (let i = 0; i < xLabel.length; i++) {
+          const scale = data[0].length / xLabel.length
+          const geometry = new TextGeometry(xLabel[i], {
+            font: font,
+            size: 0.5,
+            height: 0.02
+          })
+          const label = new THREE.Mesh(geometry, material)
+          label.position.set(i * scale, 0, 1)
+          label.rotateY(-Math.PI / 2)
+          label.rotateX(-Math.PI / 4)
+          scene.add(label)
+        }
+      }
+
+      // zLabel
+      if (zLabel) {
+        for (let i = 0; i < zLabel.length; i++) {
+          const scale = data.length / zLabel.length
+          const geometry = new TextGeometry(zLabel[i], {
+            font: font,
+            size: 0.5,
+            height: 0.02
+          })
+          const label = new THREE.Mesh(geometry, material)
+          label.position.set(-zLabel[i].length / 2 - 1, 0, -i * scale)
+          label.rotateX(-Math.PI / 4)
+
+          scene.add(label)
+        }
+      }
     }
 
     // hover effect
