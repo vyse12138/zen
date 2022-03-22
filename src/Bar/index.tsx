@@ -224,7 +224,8 @@ export default function Bar({
         position: 'relative',
         boxShadow: 'rgb(0 0 0 / 20%) 1px 2px 10px',
         height: size,
-        width: size
+        width: size,
+        textAlign: 'left'
       }}
     >
       <canvas ref={canvas}></canvas>

@@ -7,15 +7,12 @@ export default function Home() {
     <>
       <div
         style={{
-          margin: 'auto'
+          textAlign: 'center'
         }}
       >
-        <h1 style={{ textAlign: 'center', fontSize: 30, marginTop: 30 }}>
-          Zen
-        </h1>
-        <h2 style={{ textAlign: 'center', fontSize: 20 }}>
-          An Open Source 3D Charting Library
-        </h2>
+        <h1 style={{ fontSize: 30, marginTop: 30 }}>Zen</h1>
+        <h2 style={{ fontSize: 20 }}>An Open Source 3D Charting Library</h2>
+
         <Link
           to='docs'
           style={{
@@ -25,12 +22,11 @@ export default function Home() {
             height: 50,
             fontSize: 16,
             borderRadius: 30,
-            border: 'none',
+            border: '1px solid #4caf50',
             backgroundColor: '#4caf50',
             color: 'white',
             marginTop: 50,
             textDecoration: 'none',
-            textAlign: 'center',
             lineHeight: 3.2
           }}
         >
@@ -51,7 +47,6 @@ export default function Home() {
             color: '#4caf50',
             marginTop: 20,
             textDecoration: 'none',
-            textAlign: 'center',
             lineHeight: 3.2
           }}
         >
@@ -61,9 +56,7 @@ export default function Home() {
           style={{
             display: 'flex',
             margin: 20,
-            alignItems: 'center',
-            flexDirection: 'column',
-            gap: 20
+            justifyContent: 'center'
           }}
         >
           <Bar
