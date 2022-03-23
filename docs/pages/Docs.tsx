@@ -7,7 +7,7 @@ export default function Docs() {
       <Bar
         data={mock(52, 7)}
         size={500}
-        xLabel={[
+        xLabels={[
           'Jan',
           'Feb',
           'Mar',
@@ -21,7 +21,7 @@ export default function Docs() {
           'Nov',
           'Dec'
         ]}
-        zLabel={['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']}
+        zLabels={['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']}
       />
       <Bar
         data={[
@@ -31,8 +31,8 @@ export default function Docs() {
           [320, 332, 301, 334, 390]
         ]}
         size={500}
-        xLabel={['2012', '2013', '2014', '2015', '2016']}
-        zLabel={['Forest', 'Steppe', 'Desert', 'Wetland']}
+        xLabels={['2012', '2013', '2014', '2015', '2016']}
+        zLabels={['Forest', 'Steppe', 'Desert', 'Wetland']}
         colors={['#f44336', '#4caf50', '#ffeb3b', '#2196f3']}
       />
     </div>

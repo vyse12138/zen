@@ -62,7 +62,7 @@ export default function Home() {
           <Bar
             data={mock(52, 7)}
             size={500}
-            xLabel={[
+            xLabels={[
               'Jan',
               'Feb',
               'Mar',
@@ -76,7 +76,7 @@ export default function Home() {
               'Nov',
               'Dec'
             ]}
-            zLabel={['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']}
+            zLabels={['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']}
           />
         </div>
       </div>

@@ -1,33 +1,36 @@
 import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { initScene } from '../utils/scene'
+import { initCanvas } from '../utils/scene'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import Helvetica from 'three/examples/fonts/helvetiker_bold.typeface.json'
+import Modal, { ModalProps } from '../Modal'
 
 interface BarProps {
   data: number[][]
   size?: number
-  xLabel?: string[]
-  zLabel?: string[]
+  xLabels?: string[]
+  zLabels?: string[]
   colors?: string[]
 }
 
 export default function Bar({
   data,
   size = 300,
-  xLabel,
-  zLabel,
+  xLabels,
+  zLabels,
   colors = ['#4caf50']
 }: BarProps) {
   const canvas = useRef<HTMLCanvasElement>(null)
 
-  const [modalData, setModalData] = useState({
+  const [modalData, setModalData] = useState<ModalProps>({
     x: 0,
     y: 0,
     show: false,
-    position: new THREE.Vector3()
+    value: 1,
+    color: 'red',
+    xLabel: 'red',
+    zLabel: 'red'
   })
   const maxData = Math.max(...data.flat(2))
   const scale = 8 / Math.max(...data.flat(2))
@@ -35,33 +38,18 @@ export default function Bar({
   useEffect(() => {
     if (!canvas.current) return
 
+    // init
+    const [renderer, scene, camera, control] = initCanvas({
+      canvas: canvas.current,
+      size,
+      data
+    })
+
     // raycaster related variables
     const raycaster = new THREE.Raycaster()
     const pointer = new THREE.Vector2(-1, -1)
     let lastInstanceId: null | number = null
     let intersect: THREE.Intersection<THREE.Object3D<THREE.Event>>
-
-    // renderer, scene
-    const renderer = new THREE.WebGLRenderer({
-      canvas: canvas.current,
-      antialias: true
-    })
-    const scene = initScene(renderer, size)
-
-    // camera, control
-    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000)
-    const control = new OrbitControls(camera, canvas.current)
-    camera.position.z = 5
-    camera.position.x = -5
-    camera.position.y = 12
-    control.autoRotate = false
-    control.enableDamping = true
-    control.target = new THREE.Vector3(
-      Math.sqrt(data[0].length),
-      0,
-      -Math.sqrt(data.length)
-    )
-    control.screenSpacePanning = false
 
     // color
     const baseColors = colors.map(color => new THREE.Color(color))
@@ -98,18 +86,18 @@ export default function Bar({
     scene.add(cube)
 
     // label
-    if (xLabel || zLabel) {
+    if (xLabels || zLabels) {
       const font = new FontLoader().parse(Helvetica)
 
       const material = new THREE.MeshBasicMaterial({
         color: new THREE.Color('black')
       })
 
-      // xLabel
-      if (xLabel) {
-        for (let i = 0; i < xLabel.length; i++) {
-          const scale = data[0].length / xLabel.length
-          const geometry = new TextGeometry(xLabel[i], {
+      // xLabels
+      if (xLabels) {
+        for (let i = 0; i < xLabels.length; i++) {
+          const scale = data[0].length / xLabels.length
+          const geometry = new TextGeometry(xLabels[i], {
             font: font,
             size: 0.5,
             height: 0.02
@@ -122,17 +110,17 @@ export default function Bar({
         }
       }
 
-      // zLabel
-      if (zLabel) {
-        for (let i = 0; i < zLabel.length; i++) {
-          const scale = data.length / zLabel.length
-          const geometry = new TextGeometry(zLabel[i], {
+      // zLabels
+      if (zLabels) {
+        for (let i = 0; i < zLabels.length; i++) {
+          const scale = data.length / zLabels.length
+          const geometry = new TextGeometry(zLabels[i], {
             font: font,
             size: 0.5,
             height: 0.02
           })
           const label = new THREE.Mesh(geometry, material)
-          label.position.set(-zLabel[i].length / 2 - 1, 0, -i * scale)
+          label.position.set(-zLabels[i].length / 2 - 1, 0, -i * scale)
           label.rotateX(-Math.PI / 4)
 
           scene.add(label)
@@ -151,8 +139,6 @@ export default function Bar({
           ((e.clientX - e.target.getBoundingClientRect().x) / size) * 2 - 1
         pointer.y =
           -((e.clientY - e.target.getBoundingClientRect().y) / size) * 2 + 1
-
-        // get the color of last intersect
 
         // update raycaster
         raycaster.setFromCamera(pointer, camera)
@@ -184,12 +170,32 @@ export default function Bar({
           cube.getColorAt(intersect.instanceId, color)
           color.setRGB(color.r + 0.25, color.g + 0.25, color.b + 0.25)
           cube.setColorAt(intersect.instanceId, color)
+
           lastInstanceId = intersect.instanceId
         } else {
           if (typeof intersect?.instanceId === 'number') {
             cube.getMatrixAt(intersect.instanceId, matrix)
             const position = new THREE.Vector3().setFromMatrixPosition(matrix)
-            setModalData(data => ({ ...data, x, y, position, show: true }))
+
+            setModalData(modalData => ({
+              ...modalData,
+              x,
+              y,
+              position,
+              show: true,
+              zLabel: zLabels
+                ? zLabels[
+                    -Math.floor((position.z * zLabels.length) / data.length)
+                  ]
+                : position.z.toString(),
+              xLabel: xLabels
+                ? xLabels[
+                    Math.floor((position.x * xLabels.length) / data[0].length)
+                  ]
+                : position.x.toString(),
+              color: colors[-position.z % colors.length],
+              value: Math.round((position.y * 2) / scale)
+            }))
           } else {
             setModalData(data => ({ ...data, x, y, show: false }))
           }
@@ -198,7 +204,6 @@ export default function Bar({
         cube.instanceColor!.needsUpdate = true
       }
     }
-    // ray
 
     canvas.current.addEventListener('pointermove', handleHover)
     canvas.current.addEventListener('pointerover', handleHover)
@@ -229,77 +234,7 @@ export default function Bar({
       }}
     >
       <canvas ref={canvas}></canvas>
-      {
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            transform: `translate3d(${modalData.x + 10}px, ${
-              modalData.y + 10
-            }px, 0px)`,
-            willChange: 'transform',
-            backgroundColor: 'white',
-            transition: 'opacity 0.3s',
-            opacity: modalData.show ? 1 : 0,
-            borderRadius: 4,
-            pointerEvents: 'none',
-            boxShadow: 'rgb(0 0 0 / 20%) 1px 2px 10px',
-            padding: 10
-          }}
-        >
-          <div>
-            <div
-              style={{
-                display: 'inline-block',
-                borderRadius: 10,
-                border: `3px solid ${
-                  colors[-modalData.position.z % colors.length]
-                }`,
-                width: 3,
-                height: 3,
-                marginRight: 10
-              }}
-            ></div>
-            {zLabel
-              ? zLabel[
-                  -Math.floor(
-                    (modalData.position.z * zLabel.length) / data.length
-                  )
-                ]
-              : modalData.position.z}{' '}
-          </div>
-          <div>
-            <div
-              style={{
-                display: 'inline-block',
-                borderRadius: 10,
-                border: '3px solid black',
-                width: 3,
-                height: 3,
-                marginRight: 10
-              }}
-            ></div>
-            {xLabel
-              ? xLabel[
-                  Math.floor(
-                    (modalData.position.x * xLabel.length) / data[0].length
-                  )
-                ]
-              : modalData.position.x}{' '}
-            <b
-              style={{
-                display: 'inline-block',
-                marginLeft: 30,
-                fontSize: '1.2rem',
-                transform: 'translateY(-0.6rem)'
-              }}
-            >
-              {Math.round((modalData.position.y * 2) / scale)}
-            </b>
-          </div>
-        </div>
-      }
+      <Modal {...modalData} />
     </div>
   )
 }
