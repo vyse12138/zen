@@ -14,13 +14,13 @@ export default function Navigation() {
           height: 50,
           boxShadow: 'rgb(0 0 0 / 20%) 1px 2px 10px',
           zIndex: 3,
-          backgroundColor: 'white'
+          backgroundColor: 'white',
+          fontSize: 16
         }}
       >
         <Link
           style={{
             padding: 10,
-            fontSize: 16,
             textDecoration: 'none'
           }}
           to='/'
@@ -30,7 +30,6 @@ export default function Navigation() {
         <Link
           style={{
             padding: 15,
-            fontSize: 16,
             textDecoration: 'none'
           }}
           to='/docs'
@@ -40,7 +39,6 @@ export default function Navigation() {
         <Link
           style={{
             padding: 15,
-            fontSize: 16,
             textDecoration: 'none'
           }}
           to='/examples'
@@ -51,7 +49,6 @@ export default function Navigation() {
         <a
           style={{
             padding: 12,
-            fontSize: 16,
             textDecoration: 'none',
             flexGrow: '1',
             textAlign: 'right'
