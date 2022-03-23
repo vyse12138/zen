@@ -11,7 +11,9 @@ export default function Home() {
         }}
       >
         <h1 style={{ fontSize: 30, marginTop: 30 }}>Zen</h1>
-        <h2 style={{ fontSize: 20 }}>An Open Source 3D Charting Library</h2>
+        <h2 style={{ fontSize: 20 }}>
+          An Open Source 3D Charting Library for React
+        </h2>
 
         <Link
           to='docs'

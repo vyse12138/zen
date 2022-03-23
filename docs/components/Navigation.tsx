@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
-import logo from '../assets/zen.png'
+import zen from '../assets/zen.png'
+import github from '../assets/github.png'
+
 export default function Navigation() {
   return (
     <>
@@ -17,18 +19,16 @@ export default function Navigation() {
       >
         <Link
           style={{
-            height: 50,
             padding: 10,
             fontSize: 16,
             textDecoration: 'none'
           }}
           to='/'
         >
-          <img src={logo} height='30'></img>
+          <img src={zen} height='30'></img>
         </Link>
         <Link
           style={{
-            height: 50,
             padding: 15,
             fontSize: 16,
             textDecoration: 'none'
@@ -39,7 +39,6 @@ export default function Navigation() {
         </Link>
         <Link
           style={{
-            height: 50,
             padding: 15,
             fontSize: 16,
             textDecoration: 'none'
@@ -48,6 +47,22 @@ export default function Navigation() {
         >
           Examples
         </Link>
+
+        <a
+          style={{
+            padding: 12,
+            fontSize: 16,
+            textDecoration: 'none',
+            flexGrow: '1',
+            textAlign: 'right'
+          }}
+          href='https://github.com/vyse12138/zen'
+          title='Source on GitHub'
+          target='_blank'
+          rel='noopener'
+        >
+          <img src={github} height='26'></img>
+        </a>
       </div>
     </>
   )
