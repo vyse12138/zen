@@ -14,6 +14,8 @@ import bg6 from '../assets/backgrounds/3d6.jpg'
 import { useState } from 'react'
 
 export default function Examples() {
+  window.scrollTo(0, 0)
+
   const [example, setExample] = useState(1)
   const [background, setBackground] = useState('')
   const [size, setSize] = useState(window.innerHeight - 80)
