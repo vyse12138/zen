@@ -19,7 +19,7 @@ export default function GettingStarted() {
 
       <br />
       <h2>安装</h2>
-      <p> 可以通过以下的方式来安装依赖: </p>
+      <p> 可以通过以下的方式来安装依赖: (目前在打包方面还有一定的问题)</p>
 
       <SyntaxHighlighter language='javascript' style={vs2015}>
         {`
