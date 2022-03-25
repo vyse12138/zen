@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Bar } from '../../src'
+import Pie from '../../src/Pie'
 import { mock } from '../utils/mock'
 
 export default function Home() {
@@ -63,7 +65,7 @@ export default function Home() {
         >
           <Bar
             data={mock(52, 7)}
-            size={500}
+            size={350}
             xLabels={[
               'Jan',
               'Feb',

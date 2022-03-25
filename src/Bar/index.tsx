@@ -12,6 +12,8 @@ interface BarProps {
   xLabels?: string[]
   zLabels?: string[]
   colors?: string[]
+  transparent?: boolean
+  background?: string
 }
 
 export default function Bar({
@@ -19,7 +21,9 @@ export default function Bar({
   size = 300,
   xLabels,
   zLabels,
-  colors = ['#4caf50']
+  colors = ['#4caf50'],
+  transparent = false,
+  background
 }: BarProps) {
   const canvas = useRef<HTMLCanvasElement>(null)
 
@@ -42,7 +46,9 @@ export default function Bar({
     const [renderer, scene, camera, control] = initCanvas({
       canvas: canvas.current,
       size,
-      data
+      data,
+      transparent,
+      background
     })
 
     // raycaster related variables
@@ -161,11 +167,12 @@ export default function Bar({
           cube.setColorAt(lastInstanceId, color)
           lastInstanceId = null
         }
-
+        console.log(e.type)
         // update highlight and modal
         if (
           typeof intersect?.instanceId === 'number' &&
-          intersect?.instanceId !== lastInstanceId
+          intersect?.instanceId !== lastInstanceId &&
+          e.pointerType === 'mouse'
         ) {
           cube.getColorAt(intersect.instanceId, color)
           color.setRGB(color.r + 0.25, color.g + 0.25, color.b + 0.25)
@@ -206,7 +213,7 @@ export default function Bar({
     }
 
     canvas.current.addEventListener('pointermove', handleHover)
-    canvas.current.addEventListener('pointerover', handleHover)
+    canvas.current.addEventListener('pointerdown', handleHover)
     canvas.current.addEventListener('pointerleave', e => {
       if (e.pointerType !== 'mouse') return
       setModalData(data => ({ ...data, show: false }))
@@ -221,7 +228,7 @@ export default function Bar({
     return () => {
       renderer.dispose()
     }
-  }, [])
+  }, [background])
 
   return (
     <div

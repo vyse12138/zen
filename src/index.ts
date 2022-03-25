@@ -1,3 +1,4 @@
 import Bar from './Bar'
+import Pie from './Pie'
 
-export { Bar }
+export { Bar, Pie }

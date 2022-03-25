@@ -30,7 +30,8 @@ export default function Navigation() {
         <Link
           style={{
             padding: 15,
-            textDecoration: 'none'
+            textDecoration: 'none',
+            color: 'black'
           }}
           to='/docs'
         >
@@ -39,7 +40,8 @@ export default function Navigation() {
         <Link
           style={{
             padding: 15,
-            textDecoration: 'none'
+            textDecoration: 'none',
+            color: 'black'
           }}
           to='/examples'
         >
