@@ -6,21 +6,14 @@ zen 是一款 3D 图表库, 旨在通过为传统 2D 图表多增加一个维度
 
 目前支持以 React 组件的形式添加入已有的项目中
 
-[文档地址](https://zen.yuleiz.com/) (推荐使用电脑查看, 目前文档和例子页面还未来得及做手机适配, 电脑不在身边的话也可以手机扫码大致看一下我们的主页~)
+[文档地址](https://zen.yuleiz.com/) (推荐使用电脑查看, 目前文档和例子页面还未来得及做手机适配)
 
 [备用文档地址](https://zen2.netlify.app/)
 
-![Image text](./docs/assets/qrcode.jpg)
+<!-- ![Image text](./docs/assets/qrcode.jpg) -->
+<!-- ![preview](https://user-images.githubusercontent.com/62495388/161153305-e6f9d59b-11c5-4a01-91a3-4371eb54ff29.jpg) -->
 
-## 团队 / 开发介绍
-
-因为这次的时间很短, 所以目前大部分时间都花在了实际的 3D 图表组件的开发中了, 因此展示的文档页面还是十分的简陋, 希望各位多多包涵, 我们组成员的分工大致如下:
-
-- 诸瑜磊: 3D 柱状图, 文档页面
-- 戴凯羽: 3D 饼状图
-- 甘林烽: 例子展示页面
-
-项目之后应该会在 GitHub 上一直做下去, 感兴趣的朋友可以一起来玩: [GitHub 链接](https://github.com/vyse12138/zen)
+<img src="https://user-images.githubusercontent.com/62495388/161153305-e6f9d59b-11c5-4a01-91a3-4371eb54ff29.jpg" alt="preview" height="300" />  
 
 ## 技术栈
 
