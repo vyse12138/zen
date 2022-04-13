@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Bar } from '../../src'
+import { Bar } from 'react-3d-charts'
 import Pie from '../../src/Pie'
 import { mock } from '../utils/mock'
 

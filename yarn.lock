@@ -776,6 +776,11 @@ property-information@^5.0.0:
   dependencies:
     xtend "^4.0.0"
 
+react-3d-charts@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/react-3d-charts/-/react-3d-charts-0.0.1.tgz#4348c3d19de8eaec6206a4bc695209aac7ed925e"
+  integrity sha512-VuF0dBuPTcpn8/YywT8kahEE6lKzwZrGVOJikqwx+ACsfir9uo8iwTaapp3kbddR66KmPDRdtlPocrxcJ+je/Q==
+
 react-dom@^17.0.2:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.2.tgz#ecffb6845e3ad8dbfcdc498f0d0a939736502c23"
