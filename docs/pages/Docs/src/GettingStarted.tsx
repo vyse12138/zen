@@ -24,10 +24,10 @@ export default function GettingStarted() {
       <SyntaxHighlighter language='javascript' style={vs2015}>
         {`
 // 使用 npm 安装
-npm i react-3d-charts
+npm i three react-3d-charts
 
 // 使用 yarn 安装
-yarn add react-3d-charts
+yarn add three react-3d-charts
           `}
       </SyntaxHighlighter>
 
