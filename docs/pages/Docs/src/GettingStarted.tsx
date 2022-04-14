@@ -19,15 +19,15 @@ export default function GettingStarted() {
 
       <br />
       <h2>安装</h2>
-      <p> 可以通过以下的方式来安装依赖: (目前在打包方面还有一定的问题)</p>
+      <p> 可以通过以下的方式来安装依赖:</p>
 
       <SyntaxHighlighter language='javascript' style={vs2015}>
         {`
 // 使用 npm 安装
-npm i vyse-zen
+npm i react-3d-charts
 
 // 使用 yarn 安装
-yarn add vyse-zen
+yarn add react-3d-charts
           `}
       </SyntaxHighlighter>
 
