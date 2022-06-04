@@ -1,0 +1,42 @@
+{
+  "name": "zenjs-react",
+  "version": "0.0.5",
+  "devDependencies": {
+    "@types/node": "^17.0.23",
+    "@types/react": "18.0.0",
+    "@types/three": "^0.139.0",
+    "react": "18.0.0",
+    "three": "^0.139.2",
+    "typescript": "^4.5.4",
+    "vite": "^2.9.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vyse12138/zen"
+  },
+  "keywords": [
+    "three.js",
+    "react",
+    "3d",
+    "charts",
+    "charting-library",
+    "3d-charting-library",
+    "visualization",
+    "data-visualization"
+  ],
+  "author": "vyse12138",
+  "license": "MIT",
+  "homepage": "https://zen.yuleiz.com/"
+}

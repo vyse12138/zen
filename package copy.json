@@ -1,0 +1,25 @@
+{
+  "private": true,
+  "workspaces": ["packages/*", "docs", "test"],
+  "scripts": {
+    "build": "vite build packages/zenjs-react && tsc packages/zenjs-react/src/index --declaration --emitDeclarationOnly --esModuleInterop --resolveJsonModule --skipLibCheck --out packages/zenjs-react/dist/index.d.ts --jsx preserve",
+    "pub": "npm publish ./packages/zenjs-react",
+    "docs": "yarn dev ./docs",
+    "docs-build": "yarn build ./docs",
+    "dev": "vite ./test"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.23",
+    "@types/react": "18.0.0",
+    "@types/react-dom": "18.0.0",
+    "@types/three": "^0.139.0",
+    "eslint": "8.13.0",
+    "eslint-config-next": "12.1.4",
+    "next": "12.1.4",
+    "react": "18.0.0",
+    "react-dom": "18.0.0",
+    "three": "^0.139.2",
+    "typescript": "^4.5.4",
+    "vite": "^2.9.0"
+  }
+}
