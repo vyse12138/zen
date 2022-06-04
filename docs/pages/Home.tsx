@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { Bar } from 'zenjs-react'
-import Pie from '../../src/Pie'
 import { mock } from '../utils/mock'
 
 export default function Home() {
@@ -12,7 +11,7 @@ export default function Home() {
         }}
       >
         <h1 style={{ fontSize: 30, marginTop: 30 }}>Zen.js</h1>
-        <h2 style={{ fontSize: 20 }}>一个迷你开源 3D 图表库</h2>
+        <h2 style={{ fontSize: 20 }}>一款迷你的开源 3D 图表库</h2>
 
         <Link
           to='docs'
