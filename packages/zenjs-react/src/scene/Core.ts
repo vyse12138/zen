@@ -1,8 +1,18 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { LineData } from '../charts/Line3D'
+import Axis from './Axis'
 
 export default class Core {
-  constructor({ canvas, size }: { canvas: HTMLCanvasElement; size: number }) {
+  constructor({
+    canvas,
+    size,
+    data
+  }: {
+    canvas: HTMLCanvasElement
+    size: number
+    data?: LineData[]
+  }) {
     // renderer
     this.renderer = new THREE.WebGLRenderer({
       canvas,
@@ -33,11 +43,17 @@ export default class Core {
     this.control.maxDistance = 50
     this.control.screenSpacePanning = false
     this.control.target = new THREE.Vector3(10, 0, -1)
+
+    // Axis
+    this.data = data
+    data && (this.axis = new Axis({ scene: this.scene, data }))
   }
   renderer: THREE.WebGLRenderer
   scene = new THREE.Scene()
   camera: THREE.PerspectiveCamera
   control: OrbitControls
+  axis: Axis | undefined
+  data: LineData[] | undefined
 
   update = () => {
     this.control.update()

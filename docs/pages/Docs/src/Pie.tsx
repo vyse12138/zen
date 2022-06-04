@@ -1,7 +1,7 @@
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 
-import Pie from '../../../../src/Pie'
+import Pie from '../../../../packages/zenjs-react/src/charts/Pie3D'
 export default function PiePage() {
   window.scrollTo(0, 0)
 
@@ -20,6 +20,8 @@ export default function PiePage() {
       <div style={{ width: 600 }}>
         <SyntaxHighlighter language='javascript' style={vs2015}>
           {`
+import { Pie } from 'zenjs-react'
+
 <Pie
   data={[
     [111, 333, 241, 444, 542],

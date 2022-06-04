@@ -24,7 +24,7 @@ export default function Docs() {
           }}
           to=''
         >
-          Getting Started
+          开始
         </Link>
         <Link
           style={{
@@ -36,7 +36,7 @@ export default function Docs() {
           }}
           to='bar'
         >
-          Bar
+          3D 柱状图
         </Link>
         <Link
           style={{
@@ -48,7 +48,7 @@ export default function Docs() {
           }}
           to='pie'
         >
-          Pie
+          3D 饼状图
         </Link>
       </aside>
       <div

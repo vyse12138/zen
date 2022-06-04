@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as THREE from 'three'
-import { randomHEX } from '../utils/color'
-import { initCanvas } from '../utils/scene'
+import { randomHEX } from '../../utils/color'
+import { initCanvas } from '../../utils/scene'
 import { createSectorMesh } from './createSectorMesh'
-import Modal, { ModalProps } from '../Modal'
+import Modal, { ModalProps } from '../../components/Modal'
 
 interface PiePorps {
   data: number[][]

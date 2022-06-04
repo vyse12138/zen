@@ -1,5 +1,5 @@
-import { Bar } from '../../src'
-import Pie from '../../src/Pie'
+import { Bar } from 'zenjs-react'
+import Pie from '../../packages/zenjs-react/src/charts/Pie3D'
 import { mock } from '../utils/mock'
 import { Link } from 'react-router-dom'
 import bar1 from '../assets/examples/bar1.jpg'

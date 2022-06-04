@@ -35,7 +35,7 @@ export default function Navigation() {
           }}
           to='/docs'
         >
-          Docs
+          文档
         </Link>
         <Link
           style={{
@@ -45,7 +45,7 @@ export default function Navigation() {
           }}
           to='/examples'
         >
-          Examples
+          例子
         </Link>
 
         <a

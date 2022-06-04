@@ -16,5 +16,5 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "docs"]
+  "include": ["src", "docs", "packages/zenjs-react/src/charts/Pie3D"]
 }

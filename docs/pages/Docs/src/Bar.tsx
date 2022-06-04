@@ -1,7 +1,7 @@
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 
-import Bar from '../../../../src/Bar'
+import { Bar } from 'zenjs-react'
 export default function BarPage() {
   window.scrollTo(0, 0)
 
@@ -20,6 +20,8 @@ export default function BarPage() {
       <div style={{ width: 600 }}>
         <SyntaxHighlighter language='javascript' style={vs2015}>
           {`
+import { Bar } from 'zenjs-react'
+
 <Bar
   data={[
     [98, 77, 101, 99, 40],

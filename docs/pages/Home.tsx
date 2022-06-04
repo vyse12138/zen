@@ -11,10 +11,8 @@ export default function Home() {
           textAlign: 'center'
         }}
       >
-        <h1 style={{ fontSize: 30, marginTop: 30 }}>Zen</h1>
-        <h2 style={{ fontSize: 20 }}>
-          An Open Source 3D Charting Library for React
-        </h2>
+        <h1 style={{ fontSize: 30, marginTop: 30 }}>Zen.js</h1>
+        <h2 style={{ fontSize: 20 }}>一个迷你开源 3D 图表库</h2>
 
         <Link
           to='docs'
@@ -33,7 +31,7 @@ export default function Home() {
             lineHeight: 3.2
           }}
         >
-          Get Started
+          开始
         </Link>
 
         <Link
@@ -53,7 +51,7 @@ export default function Home() {
             lineHeight: 3.2
           }}
         >
-          Examples
+          例子
         </Link>
         <div
           style={{
