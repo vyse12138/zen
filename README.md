@@ -8,7 +8,7 @@ Zen.js 是一款 3D 图表库, 旨在通过为传统 2D 图表多增加一个维
 
 [文档地址](https://zen.yuleiz.com/) (推荐使用电脑查看, 目前文档和例子页面还未来得及做手机适配)
 
-[备用文档地址](https://zen2.netlify.app/)
+
 
 <!-- ![Image text](./docs/assets/qrcode.jpg) -->
 <!-- ![preview](https://user-images.githubusercontent.com/62495388/161153305-e6f9d59b-11c5-4a01-91a3-4371eb54ff29.jpg) -->
